@@ -1,6 +1,7 @@
 package tests;
 
 import com.codeborne.selenide.Configuration;
+import io.restassured.RestAssured;
 import org.testng.annotations.AfterTest;
 import org.testng.annotations.BeforeTest;
 
@@ -12,13 +13,12 @@ public class BaseTest {
 
     @BeforeTest
     public void setup() {
-
-        Configuration.baseUrl = BASE_URL;
+        RestAssured.baseURI = BASE_URL;
     }
 
-    @AfterTest (alwaysRun = true)
+    @AfterTest(alwaysRun = true)
     public void cleanUp() {
-        closeWebDriver();
-    }
+      }
 }
+
 
