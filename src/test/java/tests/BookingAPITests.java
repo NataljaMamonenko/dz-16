@@ -12,6 +12,8 @@ import org.testng.annotations.Test;
 import tests.CreateBookingResponse;
 
 import java.lang.reflect.Type;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 
 import static io.restassured.RestAssured.given;
 import static org.hamcrest.Matchers.equalTo;
@@ -42,6 +44,15 @@ public class BookingAPITests {
 
     @Test(priority = 1)
     public void createBookingTest() {
+        Date date = new Date();
+        SimpleDateFormat dmyFormat = new SimpleDateFormat("yyyy-MM-dd");
+        String formattedDate = dmyFormat.format(date);
+
+        BookingDates bookingdates = BookingDates.builder()
+                .checkin(formattedDate)
+                .checkout(formattedDate)
+                .build();
+
         CreateBookingBody body = CreateBookingBody.builder()
                 .firstname("Jim")
                 .lastname("Brown")
@@ -53,12 +64,15 @@ public class BookingAPITests {
                 .build();
 
         Response response = RestAssured.given()
+                .contentType(ContentType.JSON)
+                .accept(ContentType.JSON)
                 .body(body)
                 .post("/booking");
 
         response.prettyPrint();
         CreateBookingResponse bookingResponse = response.as(CreateBookingResponse.class);
     }
+
 
     @Test(priority = 2)
     public void getAllBookingTest() {

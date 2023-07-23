@@ -9,7 +9,6 @@ import org.json.JSONPropertyIgnore;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-@JsonIgnoreProperties(ignoreUnknown = true)
 
 public class BookingDates {
 

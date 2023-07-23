@@ -22,10 +22,5 @@ public class CreateBookingResponse {
     private BookingDates bookingdates;
     private String additionalneeds;
 
-    public static void main(String[] args) {
-        List<Integer> bookingIds = RestAssured.get("http://restful-booker.herokuapp.com/booking").then().extract().jsonPath().getList("bookingid");
-        System.out.println("Booking IDs: " + bookingIds);
-    }
-
 }
 
