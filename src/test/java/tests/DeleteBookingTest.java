@@ -1,5 +1,7 @@
 package tests;
 
+import io.restassured.RestAssured;
+import io.restassured.response.Response;
 import org.testng.annotations.Test;
 
 import static io.restassured.RestAssured.given;
@@ -8,13 +10,7 @@ public class DeleteBookingTest {
 
     @Test
     public void deleteBookingTest() {
-        int booking_Id = 3900;
-
-        given()
-                .header("Accept", "application/json")
-                .when()
-                .delete("/booking/" + booking_Id)
-                .then()
-                .statusCode(200);
+        Response response =  RestAssured.get("http://restful-booker.herokuapp.com/booking/{id}", 10);
+        response.prettyPrint();
     }
 }

@@ -7,6 +7,8 @@ import org.json.JSONObject;
 import org.testng.annotations.Test;
 
 public class UpdateBookingDetailsTest {
+
+
     private static final String TOKEN = "abc123";
 
     @Test
@@ -14,8 +16,8 @@ public class UpdateBookingDetailsTest {
         int bookingId = 919;
 
         JSONObject body = new JSONObject();
-        body.put("firstname", "John");
-        body.put("additionalneeds", "Extra pillows");
+        body.put("firstname", "James");
+        body.put("additionalneeds", "Dinner");
 
         Response updatedBooking = RestAssured.given()
                 .header("Accept", "application/json")

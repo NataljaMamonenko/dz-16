@@ -6,7 +6,7 @@ import org.testng.annotations.Test;
 import static io.restassured.RestAssured.given;
 import static org.hamcrest.Matchers.equalTo;
 
-public class UpdateBookingPriceTest extends BaseTest {
+public class UpdateBookingPriceTest {
 
     @Test
     public void updateBookingPriceTest() {
