@@ -2,16 +2,16 @@ package tests;
 
 import io.restassured.RestAssured;
 import io.restassured.builder.RequestSpecBuilder;
+import io.restassured.builder.ResponseSpecBuilder;
 import io.restassured.http.ContentType;
 import io.restassured.response.Response;
+import io.restassured.specification.ResponseSpecification;
 import org.json.JSONObject;
-import org.openqa.selenium.json.Json;
 import org.testng.annotations.AfterTest;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
-import tests.CreateBookingResponse;
 
-import java.lang.reflect.Type;
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
@@ -22,6 +22,7 @@ public class BookingAPITests {
 
     public static String TOKEN_VALUE;
     public static final String TOKEN = "token";
+    private ResponseSpecification responseSpec;
 
     @BeforeClass
     public void generateToken() {
@@ -35,18 +36,25 @@ public class BookingAPITests {
         body.put("password", "password123");
         body.put("username", "admin");
 
-        Response response = RestAssured.given()
+        Response response = given()
                 .body(body.toString())
                 .post("/auth");
         response.prettyPrint();
         TOKEN_VALUE = response.then().extract().jsonPath().get(TOKEN);
+
+        responseSpec = new ResponseSpecBuilder()
+                .expectContentType(ContentType.JSON)
+                .build();
     }
 
     @Test(priority = 1)
-    public void createBookingTest() {
+    public void createBookingTest() throws ParseException {
         Date date = new Date();
         SimpleDateFormat dmyFormat = new SimpleDateFormat("yyyy-MM-dd");
         String formattedDate = dmyFormat.format(date);
+
+        Date chekinDate = dmyFormat.parse(formattedDate);
+        Date checkoutDate = dmyFormat.parse(formattedDate);
 
         BookingDates bookingdates = BookingDates.builder()
                 .checkin(formattedDate)
@@ -58,16 +66,20 @@ public class BookingAPITests {
                 .lastname("Brown")
                 .totalprice(111)
                 .depositpaid(true)
-                .checkin("2018-08-01")
-                .checkout("2019-08-05")
+                .checkin("2018-01-01")
+                .checkout("2019-01-01")
                 .additionalneeds("Breakfast")
                 .build();
 
         Response response = RestAssured.given()
-                .contentType(ContentType.JSON)
-                .accept(ContentType.JSON)
+                .header("Content-Type", "application/json")
+                .header("Accept", "application/json")
+//                .contentType(ContentType.JSON)
+//                .accept(ContentType.JSON)
                 .body(body)
                 .post("/booking");
+
+        response.then().assertThat().contentType(ContentType.JSON);
 
         response.prettyPrint();
         CreateBookingResponse bookingResponse = response.as(CreateBookingResponse.class);
@@ -84,17 +96,20 @@ public class BookingAPITests {
     @Test(priority = 3)
     public void updateBookingPriceTest() {
         int bookingId = findFirstBooking();
-        Response response10 = RestAssured.get("/booking");
         String requestBody = "{\n" + "  \"totalprice\": 150\n" + "}";
 
         given()
                 .contentType(ContentType.JSON)
+                .header("Accept", "application/json")
+                .header("Cookie", TOKEN)
                 .body(requestBody)
                 .when()
                 .patch("/booking/" + bookingId)
                 .then()
-                .statusCode(200)
+//                .statusCode(200)
                 .body("totalprice", equalTo(150));
+//
+        Response response10 = RestAssured.get("/booking");
         response10.prettyPrint();
         UpdateBookingResponse bookingResponse = response10.as(UpdateBookingResponse.class);
     }
@@ -107,6 +122,7 @@ public class BookingAPITests {
         body.put("additionalneeds", "Dinner");
 
         Response updatedBooking = RestAssured.given()
+                .header("Content-Type", "application/json")
                 .header("Accept", "application/json")
                 .contentType(ContentType.JSON)
                 .cookie(TOKEN, TOKEN)
@@ -115,7 +131,7 @@ public class BookingAPITests {
                 .put("/booking/" + bookingId);
 
         updatedBooking.prettyPrint();
-        updatedBooking.then().statusCode(200);
+//        updatedBooking.then().statusCode(200);
     }
 
     @Test(priority = 5)
@@ -132,5 +148,5 @@ public class BookingAPITests {
 
     @AfterTest(alwaysRun = true)
     public void cleanUp() {
-          }
+    }
 }

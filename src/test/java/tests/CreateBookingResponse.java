@@ -4,6 +4,7 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import io.restassured.RestAssured;
 import lombok.*;
 
+import java.util.Date;
 import java.util.List;
 @Getter
 @Setter
@@ -17,9 +18,10 @@ public class CreateBookingResponse {
     private Integer bookingId;
     private String firstname;
     private String lastname;
-    private Integer totalprice;
-    private Boolean depositpaid;
-    private BookingDates bookingdates;
+    private int totalprice;
+    private boolean depositpaid;
+    private String checkin;
+    private String checkout;
     private String additionalneeds;
 
 }
